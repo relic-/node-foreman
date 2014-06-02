@@ -26,6 +26,9 @@ var emitter = new events.EventEmitter();
 emitter.once('killall',function(){
     display.Done("Killing All Processes");
 })
+emitter.once('killall-term',function(){
+    display.Done("Killing All Processes (Term)");
+})
 emitter.setMaxListeners(50);
 
 var _proc = require('./lib/proc')
@@ -47,9 +50,14 @@ var startForward = require('./lib/forward').startForward
 
 // Kill All Child Processes on SIGINT
 process.once('SIGINT',function userkill(){
-	console.log()
+    console.log()
     display.Warn('Interrupted by User');
     emitter.emit('killall');
+});
+process.once('SIGTERM',function userkill(){
+    console.log()
+    display.Warn('Interrupted by SIGTERM');
+    emitter.emit('killall-term');
 });
 
 program
